@@ -8,7 +8,7 @@ IMPORTANT : Before we can start using this tool we need to scaffold the entities
 			Package needed : Microsoft.EntityFrameworkCore.Tools
 			
 			=>  command based on fullstackhero !!
-			command =  Scaffold-DbContext "Data Source=(localdb)\mssqllocaldb;Initial Catalog=fullStackHeroDb;Integrated Security=True;MultipleActiveResultSets=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -ContextDir Context -Context SourceGenContext -ContextNamespace FSHCodeGenerator -Force
+			command =  Scaffold-DbContext "Data Source=(localdb)\mssqllocaldb;Initial Catalog=testfshdb;Integrated Security=True;MultipleActiveResultSets=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -ContextDir Context -Context SourceGenContext -ContextNamespace FSHCodeGenerator -Force
 			
 			!! there is a fake applicationdbcontext in the project this is needed because otherwise build fails.
 			 the scaffold command has the -Force flag so the fake context is overwritten.	

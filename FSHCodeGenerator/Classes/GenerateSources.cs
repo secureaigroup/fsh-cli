@@ -14,7 +14,6 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using MySql.EntityFrameworkCore;
 using FSHCodeGenerator.SourceCodeGeneratorClasses;
 using System.Linq.Expressions;
-using FSHCodeGenerator.Context;
 
 namespace FSHCodeGenerator.Classes
 {

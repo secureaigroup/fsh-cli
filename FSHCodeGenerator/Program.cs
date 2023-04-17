@@ -7,7 +7,6 @@ using FSHCodeGenerator.InterFaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using MySql.EntityFrameworkCore;
-using FSHCodeGenerator.Context;
 
 namespace FSHCodeGenerator
 {
@@ -39,7 +38,7 @@ namespace FSHCodeGenerator
             .ConfigureServices((context, services) =>
             {
               
-                services.AddDbContext<SourceGenContext>( options => options.UseSqlServer(connstring));
+                services.AddDbContext<SourceGenContext>( options => options.UseMySQL(connstring));
                 services.AddTransient<ISourceGenerator, SourceGenerator>();
                 services.AddTransient<IGenerateSources, GenerateSources>();
                 services.AddTransient<IGetEntities, GetEntities>();

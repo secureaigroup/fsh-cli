@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FSHCodeGenerator.Models
+namespace FSHCodeGenerator.Models;
+
+public partial class Distributedlock
 {
-    public partial class Distributedlock
-    {
-        public string Resource { get; set; } = null!;
-        public DateTime CreatedAt { get; set; }
-    }
+    public string Resource { get; set; } = null!;
+
+    public DateTime CreatedAt { get; set; }
 }
