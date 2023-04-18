@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using FSHCodeGenerator.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FSHCodeGenerator;
+namespace FSHCodeGenerator.Context;
 
 public partial class SourceGenContext : DbContext
 {
@@ -30,7 +30,11 @@ public partial class SourceGenContext : DbContext
 
     public virtual DbSet<Employee> Employees { get; set; }
 
-    public virtual DbSet<EmployeeState> EmployeeStates { get; set; }
+    public virtual DbSet<Employeestate> Employeestates { get; set; }
+
+    public virtual DbSet<External> Externals { get; set; }
+
+    public virtual DbSet<Externalstate> Externalstates { get; set; }
 
     public virtual DbSet<Hash> Hashes { get; set; }
 
@@ -44,6 +48,8 @@ public partial class SourceGenContext : DbContext
 
     public virtual DbSet<List> Lists { get; set; }
 
+    public virtual DbSet<Nation> Nations { get; set; }
+
     public virtual DbSet<Product> Products { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
@@ -53,6 +59,8 @@ public partial class SourceGenContext : DbContext
     public virtual DbSet<Server> Servers { get; set; }
 
     public virtual DbSet<Set> Sets { get; set; }
+
+    public virtual DbSet<Shift> Shifts { get; set; }
 
     public virtual DbSet<State> States { get; set; }
 
@@ -70,7 +78,7 @@ public partial class SourceGenContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseMySQL("server=rojasnas;uid=root;password=Saipassword1;Database=testFSHdb;Allow User Variables=True");
+        => optionsBuilder.UseMySQL("server=rojasnas;uid=root;password=Saipassword1;Database=test2FSHdb;Allow User Variables=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -147,7 +155,9 @@ public partial class SourceGenContext : DbContext
 
             entity.ToTable("employees");
 
-            entity.HasIndex(e => e.EmployeeStateId, "IX_Employees_EmployeeStateId");
+            entity.HasIndex(e => e.ShiftId, "IX_Employees_ShiftId");
+
+            entity.HasIndex(e => e.EmployeestateId, "IX_Employees_employeestateId");
 
             entity.Property(e => e.ContactNumber).HasMaxLength(15);
             entity.Property(e => e.CreatedOn).HasMaxLength(6);
@@ -160,6 +170,7 @@ public partial class SourceGenContext : DbContext
             entity.Property(e => e.DoB).HasColumnType("date");
             entity.Property(e => e.EmailAddress).HasMaxLength(128);
             entity.Property(e => e.EmployeeNumber).HasMaxLength(32);
+            entity.Property(e => e.EmployeestateId).HasColumnName("employeestateId");
             entity.Property(e => e.FirstName).HasMaxLength(32);
             entity.Property(e => e.Gender)
                 .HasMaxLength(1)
@@ -168,18 +179,24 @@ public partial class SourceGenContext : DbContext
             entity.Property(e => e.LastModifiedOn).HasMaxLength(6);
             entity.Property(e => e.LastName).HasMaxLength(32);
             entity.Property(e => e.MotherMaidenName).HasMaxLength(64);
-            entity.Property(e => e.UserId).HasMaxLength(255);
+            entity.Property(e => e.TenantId)
+                .HasMaxLength(64)
+                .HasDefaultValueSql("''");
             entity.Property(e => e.VehicleColor).HasMaxLength(32);
             entity.Property(e => e.VehicleMake).HasMaxLength(32);
             entity.Property(e => e.VehicleModel).HasMaxLength(32);
             entity.Property(e => e.VehicleRegisteredNumber).HasMaxLength(32);
 
-            entity.HasOne(d => d.EmployeeState).WithMany(p => p.Employees)
-                .HasForeignKey(d => d.EmployeeStateId)
-                .HasConstraintName("FK_Employees_EmployeeStates_EmployeeStateId");
+            entity.HasOne(d => d.Employeestate).WithMany(p => p.Employees)
+                .HasForeignKey(d => d.EmployeestateId)
+                .HasConstraintName("FK_Employees_EmployeeStates_employeestateId");
+
+            entity.HasOne(d => d.Shift).WithMany(p => p.Employees)
+                .HasForeignKey(d => d.ShiftId)
+                .HasConstraintName("FK_Employees_Shifts_ShiftId");
         });
 
-        modelBuilder.Entity<EmployeeState>(entity =>
+        modelBuilder.Entity<Employeestate>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
@@ -189,7 +206,79 @@ public partial class SourceGenContext : DbContext
             entity.Property(e => e.CreatedOn).HasMaxLength(6);
             entity.Property(e => e.DeletedOn).HasMaxLength(6);
             entity.Property(e => e.LastModifiedOn).HasMaxLength(6);
-            entity.Property(e => e.Name).HasMaxLength(32);
+            entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.TenantId)
+                .HasMaxLength(64)
+                .HasDefaultValueSql("''");
+        });
+
+        modelBuilder.Entity<External>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("externals");
+
+            entity.HasIndex(e => e.ExternalStateId, "IX_Externals_ExternalStateId");
+
+            entity.HasIndex(e => e.NationId, "IX_Externals_NationID");
+
+            entity.HasIndex(e => e.ShiftId, "IX_Externals_ShiftId");
+
+            entity.Property(e => e.AllowedUntil).HasColumnType("date");
+            entity.Property(e => e.BadgeNumber).HasMaxLength(15);
+            entity.Property(e => e.CompanyIdnumber)
+                .HasMaxLength(32)
+                .HasColumnName("CompanyIDNumber");
+            entity.Property(e => e.CompanyName).HasMaxLength(64);
+            entity.Property(e => e.ContactNumber).HasMaxLength(15);
+            entity.Property(e => e.CreatedOn).HasMaxLength(6);
+            entity.Property(e => e.DeletedOn).HasMaxLength(6);
+            entity.Property(e => e.Designation).HasMaxLength(50);
+            entity.Property(e => e.DoB).HasColumnType("date");
+            entity.Property(e => e.EmailAddress).HasMaxLength(128);
+            entity.Property(e => e.ExternalNumber).HasMaxLength(32);
+            entity.Property(e => e.FirstName).HasMaxLength(32);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(1)
+                .IsFixedLength();
+            entity.Property(e => e.LastModifiedOn).HasMaxLength(6);
+            entity.Property(e => e.LastName).HasMaxLength(32);
+            entity.Property(e => e.Matter).HasMaxLength(255);
+            entity.Property(e => e.MotherMaidenName).HasMaxLength(64);
+            entity.Property(e => e.NationId).HasColumnName("NationID");
+            entity.Property(e => e.Observations).HasMaxLength(512);
+            entity.Property(e => e.PermitExpiryDate).HasColumnType("date");
+            entity.Property(e => e.TenantId).HasMaxLength(64);
+            entity.Property(e => e.VehicleColor).HasMaxLength(32);
+            entity.Property(e => e.VehicleMake).HasMaxLength(32);
+            entity.Property(e => e.VehicleModel).HasMaxLength(32);
+            entity.Property(e => e.VehicleRegisteredNumber).HasMaxLength(32);
+
+            entity.HasOne(d => d.ExternalState).WithMany(p => p.Externals)
+                .HasForeignKey(d => d.ExternalStateId)
+                .HasConstraintName("FK_Externals_ExternalStates_ExternalStateId");
+
+            entity.HasOne(d => d.Nation).WithMany(p => p.Externals)
+                .HasForeignKey(d => d.NationId)
+                .HasConstraintName("FK_Externals_Nations_NationID");
+
+            entity.HasOne(d => d.Shift).WithMany(p => p.Externals)
+                .HasForeignKey(d => d.ShiftId)
+                .HasConstraintName("FK_Externals_Shifts_ShiftId");
+        });
+
+        modelBuilder.Entity<Externalstate>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("externalstates");
+
+            entity.Property(e => e.Access).HasMaxLength(1);
+            entity.Property(e => e.CreatedOn).HasMaxLength(6);
+            entity.Property(e => e.DeletedOn).HasMaxLength(6);
+            entity.Property(e => e.LastModifiedOn).HasMaxLength(6);
+            entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.TenantId).HasMaxLength(64);
         });
 
         modelBuilder.Entity<Hash>(entity =>
@@ -275,6 +364,16 @@ public partial class SourceGenContext : DbContext
             entity.Property(e => e.Key).HasMaxLength(100);
         });
 
+        modelBuilder.Entity<Nation>(entity =>
+        {
+            entity.HasKey(e => e.NationId).HasName("PRIMARY");
+
+            entity.ToTable("nations");
+
+            entity.Property(e => e.NationId).HasColumnName("NationID");
+            entity.Property(e => e.Name).HasMaxLength(32);
+        });
+
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -346,6 +445,22 @@ public partial class SourceGenContext : DbContext
             entity.Property(e => e.ExpireAt).HasColumnType("datetime");
             entity.Property(e => e.Key).HasMaxLength(100);
             entity.Property(e => e.Value).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<Shift>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("shifts");
+
+            entity.Property(e => e.CreatedOn).HasMaxLength(6);
+            entity.Property(e => e.DaysOfWeek).HasMaxLength(16);
+            entity.Property(e => e.DeletedOn).HasMaxLength(6);
+            entity.Property(e => e.EndTime).HasMaxLength(6);
+            entity.Property(e => e.LastModifiedOn).HasMaxLength(6);
+            entity.Property(e => e.Name).HasMaxLength(32);
+            entity.Property(e => e.StartTime).HasMaxLength(6);
+            entity.Property(e => e.TenantId).HasMaxLength(64);
         });
 
         modelBuilder.Entity<State>(entity =>
