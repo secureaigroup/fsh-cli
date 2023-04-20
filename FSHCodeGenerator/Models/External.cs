@@ -71,9 +71,7 @@ public partial class External
 
     public Guid? ShiftId { get; set; }
 
-    public int? NationalityId { get; set; }
-
-    public int NationId { get; set; }
+    public int? NationId { get; set; }
 
     public string TenantId { get; set; } = null!;
 
@@ -89,9 +87,9 @@ public partial class External
 
     public Guid? DeletedBy { get; set; }
 
-    public virtual Externalstate? ExternalState { get; set; }
+    public virtual ExternalState? ExternalState { get; set; }
 
-    public virtual Nation Nation { get; set; } = null!;
+    public virtual Nation? Nation { get; set; }
 
     public virtual Shift? Shift { get; set; }
 }

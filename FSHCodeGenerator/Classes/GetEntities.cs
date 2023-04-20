@@ -37,7 +37,7 @@ namespace FSHCodeGenerator.Classes
                     int endplural = trimLine.IndexOf('=');
                     entityplural = trimLine.Substring(end + 1, endplural - 1 - end);                    
 
-                        checkentities.Add(entitysingle.Trim(), entityplural.Trim());
+                        checkentities.Add(entitysingle.ToLower().Trim(), entityplural.Trim());
                     
                 }
             }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using FSHCodeGenerator.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FSHCodeGenerator.Context;
+namespace FSHCodeGenerator;
 
 public partial class SourceGenContext : DbContext
 {
@@ -34,7 +34,7 @@ public partial class SourceGenContext : DbContext
 
     public virtual DbSet<External> Externals { get; set; }
 
-    public virtual DbSet<Externalstate> Externalstates { get; set; }
+    public virtual DbSet<ExternalState> ExternalStates { get; set; }
 
     public virtual DbSet<Hash> Hashes { get; set; }
 
@@ -220,9 +220,9 @@ public partial class SourceGenContext : DbContext
 
             entity.HasIndex(e => e.ExternalStateId, "IX_Externals_ExternalStateId");
 
-            entity.HasIndex(e => e.NationId, "IX_Externals_NationID");
-
             entity.HasIndex(e => e.ShiftId, "IX_Externals_ShiftId");
+
+            entity.HasIndex(e => e.NationId, "IX_Externals_nationId");
 
             entity.Property(e => e.AllowedUntil).HasColumnType("date");
             entity.Property(e => e.BadgeNumber).HasMaxLength(15);
@@ -245,7 +245,7 @@ public partial class SourceGenContext : DbContext
             entity.Property(e => e.LastName).HasMaxLength(32);
             entity.Property(e => e.Matter).HasMaxLength(255);
             entity.Property(e => e.MotherMaidenName).HasMaxLength(64);
-            entity.Property(e => e.NationId).HasColumnName("NationID");
+            entity.Property(e => e.NationId).HasColumnName("nationId");
             entity.Property(e => e.Observations).HasMaxLength(512);
             entity.Property(e => e.PermitExpiryDate).HasColumnType("date");
             entity.Property(e => e.TenantId).HasMaxLength(64);
@@ -260,14 +260,14 @@ public partial class SourceGenContext : DbContext
 
             entity.HasOne(d => d.Nation).WithMany(p => p.Externals)
                 .HasForeignKey(d => d.NationId)
-                .HasConstraintName("FK_Externals_Nations_NationID");
+                .HasConstraintName("FK_Externals_Nations_nationId");
 
             entity.HasOne(d => d.Shift).WithMany(p => p.Externals)
                 .HasForeignKey(d => d.ShiftId)
                 .HasConstraintName("FK_Externals_Shifts_ShiftId");
         });
 
-        modelBuilder.Entity<Externalstate>(entity =>
+        modelBuilder.Entity<ExternalState>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
@@ -366,11 +366,17 @@ public partial class SourceGenContext : DbContext
 
         modelBuilder.Entity<Nation>(entity =>
         {
-            entity.HasKey(e => e.NationId).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("nations");
 
-            entity.Property(e => e.NationId).HasColumnName("NationID");
+            entity.Property(e => e.CreatedBy).HasDefaultValueSql("'00000000-0000-0000-0000-000000000000'");
+            entity.Property(e => e.CreatedOn)
+                .HasMaxLength(6)
+                .HasDefaultValueSql("'0001-01-01 00:00:00.000000'");
+            entity.Property(e => e.DeletedOn).HasMaxLength(6);
+            entity.Property(e => e.LastModifiedBy).HasDefaultValueSql("'00000000-0000-0000-0000-000000000000'");
+            entity.Property(e => e.LastModifiedOn).HasMaxLength(6);
             entity.Property(e => e.Name).HasMaxLength(32);
         });
 

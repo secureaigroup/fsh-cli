@@ -98,7 +98,7 @@ namespace FSHCodeGenerator.Classes
 
                         string applicationCatalog = Path.Combine(sourceSettings.PathToFSHBoilerPlate, sourceSettings.PathToApplicationCatalog);
 
-                        bool entityFound = theEntities.TryGetValue(t.DisplayName(), out _entityPlural);
+                        bool entityFound = theEntities.TryGetValue(t.DisplayName().ToLower(), out _entityPlural);
 
                         if (entityFound) // the Ef core entity is found in the Dictionary of our context entities
                         {                            

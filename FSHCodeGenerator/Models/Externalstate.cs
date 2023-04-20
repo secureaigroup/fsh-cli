@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FSHCodeGenerator.Models;
 
-public partial class Externalstate
+public partial class ExternalState
 {
     public Guid Id { get; set; }
 
